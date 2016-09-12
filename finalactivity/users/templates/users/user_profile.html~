@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    {% load staticfiles %}
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Edit My Profile</title>
+    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-theme.min.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/blog.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/datepicker.css" %}">
+
+    <!--script type="text/javascript" src="../../../static/js/jquery-2.1.1.min.js"></script-->
+    <!--script src="//code.jquery.com/jquery-1.11.3.min.js"></script-->
+   <script type="text/javascript" src="../../../static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.min.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker3.min.css" />
+
+
+   <script type="text/javascript" src="../../../static/js/moment-with-locales.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js"></script>
+       <script type="text/javascript"  src="../../../static/js/bootstrap-datepicker.js"></script>
+
+
+    <script type="text/javascript">
+    function backprofile()
+    {
+    window.location.assign("{% url 'users:detail' %}")
+    }
+    </script>
+    </head>
+
+    <body>
+	<script type="text/javascript">
+	  var gg={{ userprofile.latitude }};
+	  var ff={{ userprofile.longitude }};
+    </script>
+        
+    {% if user.is_authenticated %}
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'users:index' %}">Home</a>
+	  <a class="navbar-brand" href="{% url 'search:topsearch' %}">Events</a>
+	  <a class="navbar-brand" href="{% url 'events:post'%}">Post</a>
+	  <a class="navbar-brand" href="#">About us</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+	{% if user.is_authenticated %}
+	<div>
+	<a class="navbar-right navbar-brand" href="{% url 'users:logout' %}">Logout</a>
+	<a class="navbar-right navbar-brand" href="{% url 'users:homepage' %}">Homepage</a>
+	<h3 class="navbar-right">Hi, {{user.username}}!</h3>
+	</div>
+	{% else %}
+          <form class="navbar-form navbar-right" id="login_form" method="post" action="/users/login/" >
+	{% csrf_token %}
+            <div class="form-group">
+              <input placeholder="Username" name="username" class="form-control" type="text">
+            </div>
+            <div class="form-group">
+              <input placeholder="Password" name="password" class="form-control" type="password">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+	    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">Register</button>
+          </form>
+	{% endif %}
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+
+    <div class="container" style="margin-top: 60px;">
+        <div class="row">
+            <div class="col-md-3 blog-sidebar">
+                <ul class="nav nav-pills nav-stacked">
+                <li role="presentation"><a href="{% url 'users:homepage' %}">Homepage</a></li>
+                <li role="presentation" class="active"><a href="{% url 'users:detail' %}">Profile</a></li>
+                <li role="presentation"><a href="{% url 'users:chapass' %}">Change Password</a></li>
+                <li role="presentation"><a href="{% url 'users:posted' %}">Posted Events</a></li>
+                <li role="presentation"><a href="{% url 'users:engaged' %}">Joined Events</a></li>
+                <li role="presentation"><a href="{% url 'users:favorite' %}">Favorite Events</a></li>
+
+                </ul>
+            </div> 
+
+            <div class="col-md-9 blog-main" align="left">
+                 {% if messages %}
+                  <div class="messages">
+                 {% for message in messages %}
+                 {% if message.tags %}
+                     <div class="alert alert-info" role="alert">{{ message }}</div>
+                 {% endif %}
+                 {% endfor %}
+                 </div>
+                {% endif %}
+
+                {% if edited %}
+                  <script>backprofile()</script>
+                {% else %}
+                <form id="profileform" method="post" action="{% url 'users:user_profile'%}">
+                {% csrf_token %}
+                <center><h3>Edit Personal Information</h3></center>
+
+                <table class="table table-striped">
+                    <tr>
+                        <td>Username</td>
+                        <td>{{ user.username }}</td>
+                     </tr>
+
+                     <tr>
+                        <td><span>*</span>Email</td>
+                        <td><input type="text" name="email_" value="{{ user.email }}" size="35" class="form-control" required="required"/></td>
+                     </tr>
+
+                     <tr>
+                        <td><span>*</span>Birthday</td>
+                        <td><input type="date" id="birthday_" name="birthday_" value="{{ userprofile.birthday|date:"Y-m-d"  }}" size="50" class="form-control" required="required" placehoder="yyyy-mm-dd"/>
+
+        <script type="text/javascript">
+            // When the document is ready
+            $(document).ready(function () {
+                
+                $('#birthday_').datepicker({
+                    format: "dd/mm/yyyy"
+                });  
+            
+            });
+        </script>
+
+
+
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td>Username Public</td>
+                        <td><div class="checkbox"><label><input type="checkbox" name="make_public_your_user_name" {% if userprofile.make_public_your_user_name %}checked{% else %}  {% endif %} > Make your username public.</input></label></div></td>
+                     </tr>
+
+                     <tr>
+                        <td>Phonenumber</td>
+                        <td><input type="text" name="phonenumber_" checked value="{{ userprofile.phonenumber }}" size="50" class="form-control"/></td>
+                     </tr>
+
+                     <tr>
+                        <td>Address</td>
+                        <td><iframe src="{% url 'users:map' %}" width="100%" height="200"></iframe></td>
+                     </tr>
+
+                     <tr>
+                        <td>Street Number</td>
+                        <td><input type="text" id="street_number_" name="street_number_" value="{{ userprofile.street_number }}" size="50" class="form-control"/></td>
+                     </tr>
+
+                     <tr>
+                        <td>Street Name</td>
+                        <td><input type="text" id="street_name_" name="street_name_" value="{{ userprofile.street_name }}" size="50" class="form-control"/></td>
+                     </tr>
+
+                     <tr>
+                        <td>City Name</td>
+                        <td><input type="text" id="city_name_" name="city_name_" value="{{ userprofile.city_name }}" size="50" class="form-control"/></td>
+                     </tr>
+
+                     <tr>
+                        <td>Province Name</td>
+                        <td><input type="text" id="province_name_" name="province_name_" value="{{ userprofile.province_name }}" size="50" class="form-control"/></td>
+                     </tr>
+
+                     <tr>
+                        <td>Country Name</td>
+                        <td><input type="text" id="country_name_" name="country_name_" value="{{ userprofile.country_name }}" size="50" class="form-control"/></td>
+                     </tr>
+
+                     <tr>
+                        <td>Postal Code</td>
+                        <td><input type="text" id="postal_code_" name="postal_code_" value="{{ userprofile.postal_code }}" size="50" class="form-control"/></td>
+                     </tr>
+
+                     <tr>
+                        <td>Latitude</td>
+                        <td><input type="text" id="latitude_" name="latitude_" value="{{ userprofile.latitude }}" size="50" class="form-control"/></td>
+                     </tr>
+
+                     <tr>
+                        <td>Longitude</td>
+                        <td><input type="text" id="longitude_" name="longitude_" value="{{ userprofile.longitude }}" size="50" class="form-control"/> <br /></td>
+                     </tr>
+
+                     <tr>
+                        <td>Preferance</td>
+                        <td>
+                            <div class="checkbox"><label><input type="checkbox" name="isMusic" {% if userprofile.isMusic %}checked{% else %} {% endif %}/> Music</label></div>
+            				<div class="checkbox"><label><input type="checkbox" name="isSports_" {% if userprofile.isSports %}checked{% else %}{% endif %} /> Sports</label></div>
+            				<div class="checkbox"><label><input type="checkbox" name="isFood_Drink_" {% if userprofile.isFood_Drink %} checked{% else %} {% endif %} /> Food_and_Drink</label></div>
+            				<div class="checkbox"><label><input type="checkbox" name="isParties_" {% if userprofile.isParties %}checked{% else %} {% endif %} /> Parties</label></div>
+            				<div class="checkbox"><label><input type="checkbox" name="isArts_" {% if userprofile.isArts %} checked{% else %} {% endif %} /> Arts</label></div>
+            				<div class="checkbox"><label><input type="checkbox" name="isBusiness_" {% if userprofile.isBusiness %} checked{% else %} {% endif %} /> Business</label></div>
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td>Gender</td>
+                        <td>
+                        <input type="radio" name="sex" value="male" {% if userprofile.isMale %} checked{% else %} {% endif %}> Male<br />
+            			<input type="radio" name="sex" value="female" {% if userprofile.isFemale %} checked{% else %} {% endif %}> Female
+            			</td>
+                     </tr>                     
+                </table>
+                <div align="center"><button type="submit" class="btn btn-info"/>Update</button></div>
+                </form>
+                {% endif %}
+                <br />
+                </div>
+            </div>              
+        </div>
+    {% else %}
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Home</a>
+          <a class="navbar-brand" href="#">Events</a>
+          <a class="navbar-brand" href="#">Post</a>
+          <a class="navbar-brand" href="#">About us</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <form class="navbar-form navbar-right">
+            <div class="form-group">
+              <input placeholder="Email" class="form-control" type="text">
+            </div>
+            <div class="form-group">
+              <input placeholder="Password" class="form-control" type="password">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+            <button class="btn btn-success">Sign up</button>
+          </form>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+    <div style="margin-top: 51px;">
+        <h1> Hello world!</h1>
+        <h1> Please login first!</h1>
+    </div>
+    {% endif %}
+   <script type="text/javascript" src="../../../static/js/jquery-1.9.1.min.js"></script>
+       <!--script type="text/javascript" src="../../../static/js/jquery-2.1.1.min.js"></script>
+       <!--script src="//code.jquery.com/jquery-1.11.3.min.js"></script-->
+       <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js"></script>
+      <script type="text/javascript"  src="../../../static/js/bootstrap-datepicker.js"></script>
+    </body>
+</html>

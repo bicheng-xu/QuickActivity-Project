@@ -1,0 +1,216 @@
+ <!DOCTYPE html>
+<html>
+    <head>
+    {% load staticfiles %}
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>My Profile</title>
+    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-theme.min.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/blog.css" %}">
+
+
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    </head>
+
+    <body>
+	<script type="text/javascript">
+	  var gg={{ userprofile.latitude }};
+	  var ff={{ userprofile.longitude }};
+    </script>
+    
+    {% if user.is_authenticated %}
+<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'users:index' %}">Home</a>
+	  <a class="navbar-brand" href="#">Events</a>
+	  <a class="navbar-brand" href="{% url 'events:post'%}">Post</a>
+	  <a class="navbar-brand" href="#">About us</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+	{% if user.is_authenticated %}
+	<div>
+	<a class="navbar-right navbar-brand" href="{% url 'users:logout' %}">Logout</a>
+	<a class="navbar-right navbar-brand" href="{% url 'users:homepage' %}">Homepage</a>
+	<h3 class="navbar-right">Hi, {{user.username}}!</h3>
+	</div>
+	{% else %}
+          <form class="navbar-form navbar-right" id="login_form" method="post" action="/users/login/" >
+	{% csrf_token %}
+            <div class="form-group">
+              <input placeholder="Username" name="username" class="form-control" type="text">
+            </div>
+            <div class="form-group">
+              <input placeholder="Password" name="password" class="form-control" type="password">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+	    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">Register</button>
+          </form>
+	{% endif %}
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+
+    <div class="container" style="margin-top: 60px;">
+        <div class="row">
+            <div class="col-sm-3 blog-sidebar">
+                <ul class="nav nav-pills nav-stacked">
+                <li role="presentation" class="active"><a href="{% url 'users:detail' %}">Profile</a></li>
+                <li role="presentation"><a href="{% url 'users:chapass' %}">Change Password</a></li>
+                <li role="presentation"><a href="{% url 'users:posted' %}">Posted Events</a></li>
+                <li role="presentation"><a href="{% url 'users:engaged' %}">Joined Events</a></li>
+                <li role="presentation"><a href="{% url 'users:favorite' %}">Favorite Events</a></li>
+
+                </ul>
+            </div> 
+
+            <div class="col-xs-8 blog-main" align="left">
+                <table class="table table-striped">
+                    <tr>
+                        <td>Username</td>
+                        <td>{{ user.username }}</td>
+                     </tr>
+
+                     <tr>
+                        <td>Email</td>
+                        <td>{{ user.email }}</td>
+                     </tr>
+
+                     <tr>
+                        <td>Birthday</td>
+                        <td>{{ userprofile.birthday }}</td>
+                     </tr>
+
+                     <tr>
+                        <td>Username Public</td>
+                        <td>{{ userprofile.make_public_your_user_name }}</td>
+                     </tr>
+
+                     <tr>
+                        <td>Phonenumber</td>
+                        <td>{{ userprofile.phonenumber }}</td>
+                     </tr>
+
+                     <tr>
+                        <td>Address</td>
+                        <td><iframe src="{% url 'users:dmap' %}" width="450" height="200"></iframe></td>
+                     </tr>
+
+                     <tr>
+                        <td>Street Number</td>
+                        <td>{{ userprofile.street_number }}</td>
+                     </tr>
+
+                     <tr>
+                        <td>Street Name</td>
+                        <td>{{ userprofile.street_name }}</td>
+                     </tr>
+
+                     <tr>
+                        <td>City Name</td>
+                        <td>{{ userprofile.city_name }}</td>
+                     </tr>
+
+                     <tr>
+                        <td>Province Name</td>
+                        <td>{{ userprofile.province_name }}</td>
+                     </tr>
+
+                     <tr>
+                        <td>Country Name</td>
+                        <td>{{ userprofile.country_name }}</td>
+                     </tr>
+
+                     <tr>
+                        <td>Preferance</td>
+                        <td>
+                            {% if userprofile.isMusic %}
+                            Music 
+                            {% endif %}
+                            {% if userprofile.isSports %}
+                            Sports  
+                            {% endif %}
+                            {% if userprofile.isFood_Drink %}
+                            Food_and_Drink 
+                            {% endif %}
+                            {% if userprofile.isParties %}
+                            Parties  
+                            {% endif %}
+                            {% if userprofile.isArts %}
+                            Arts 
+                            {% endif %}
+                            {% if userprofile.isBusiness %}
+                            Business 
+                            {% endif %}
+                            {% if userprofile.isMusic == False and userprofile.isSports == False and userprofile.isFood_Drink == False and userprofile.isParties == False and userprofile.isArts == False and userprofile.isBusiness == False %}
+                            NULL
+                            {% endif %}
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td>Gender</td>
+                        {% if userprofile.isMale %}
+                        <td>Male</td>
+                        {% endif %}
+                        {% if userprofile.isFemale %}
+                        <td>Female</td>
+                        {% endif %}
+                     </tr>                     
+                </table>
+                <div align="center"><a href="{% url 'users:user_profile' %}"><button type="button" class="btn btn-info">Edit the Profile</button></a></div>
+                <br />
+                </div>
+            </div>              
+        </div>
+    {% else %}
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Home</a>
+          <a class="navbar-brand" href="#">Events</a>
+          <a class="navbar-brand" href="#">Post</a>
+          <a class="navbar-brand" href="#">About us</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <form class="navbar-form navbar-right">
+            <div class="form-group">
+              <input placeholder="Email" class="form-control" type="text">
+            </div>
+            <div class="form-group">
+              <input placeholder="Password" class="form-control" type="password">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+      <button class="btn btn-success">Sign up</button>
+          </form>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+    <div style="margin-top: 51px;">
+        <h1> Hello world!</h1>
+        <h1> Please login first!</h1>
+    </div>
+    {% endif %}
+
+       <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+       <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    </body>
+</html>
